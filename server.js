@@ -4,7 +4,7 @@ const app = express(); // create one
 
 // plan:
 // ok "/" get: to see if it's working
-// "/signin" post: sign in 
+// ok "/signin" post: sign in, return user 
 // "/register" post: register
 // "/loadActivity" get: get activity data last week from database
 // "/loadExercise" get: get exercise data
@@ -16,7 +16,8 @@ app.get('/', (req, res) => {
     res.json("hi there!")
 })
 
-
+app.use(express.urlencoded({extended: false}));
+app.use(express.json());
 
 // create an object variable to mimic database
 const database = {
@@ -30,13 +31,31 @@ const database = {
     ]
 } 
 
-// app.post('/signin', (req, res) => {
-//     console.log(req.email, req.password)
-//     if(req.email === 'marina@gmail.com' && req.password ==='1111'){
-//         res.json(database.users[0])
-//     }    else{
-//     res.status(404).json('wrong credential')}
-// })
+app.post('/signin', (req, res) => {
+    if(req.body.email === database.users[0].email && req.body.password ===database.users[0].password){
+        res.json(database.users[0])
+    }
+    else{
+        res.status(404).json('signin failed');
+    }
+})
+
+app.post('/register', (req, res) => {
+    const {name, email, password} = req.body;
+    if(name && email && password){
+        database.users.push({
+            id: 124,
+            name: name, 
+            email: email,
+            password: password
+        });
+        res.json(database.users[database.users.length-1]);
+    }
+    else{
+        res.status(404).json("failed!!")
+    }
+})
+
 // 待修改
 // const initialState = {
 //     name: '',
@@ -70,4 +89,4 @@ const database = {
 
 
 // set port
-app.listen(3000, console.log("server is running on 3000!"));
+app.listen(3000, () => {console.log("server is running on 3000!")});

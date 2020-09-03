@@ -6,8 +6,8 @@ const app = express(); // create one
 // ok "/" get: to see if it's working
 // ok "/signin" post: sign in, return user 
 // ok "/register" post: register
-// "/loadActivity" get: get activity data last week from database
-// "/loadExercise" get: get exercise data
+// "/activity" get: get activity data last week from database
+// "/exercise" get: get exercise data
 // "/calculate" get: 0. if weight = 0，從資料庫叫weight, deficit。1. do calculation, 2. show it on page (前端)
 //     3. save 所有數據 to database(weight, totalDeficit, 每日總熱量, 每日碳水量, 活動運動量, )
 // "/result" get: 從database叫出上次儲存的結果
@@ -37,32 +37,32 @@ const database = {
         {
             name:'marina',
             email: 'marina@gmail.com',
-            weight: 0,
-            deficit: 0,
+            weight: 55,
+            deficit: 300,
         }
     ],
     table_activity: [
         {
             userEmail:'',
-            0:'',
-            1:'',
-            2:'',
-            3:'',
-            4:'',
-            5:'',
-            6:'',
+            0:'0',
+            1:'1',
+            2:'0',
+            3:'1',
+            4:'0',
+            5:'3',
+            6:'2',
         }
     ],
     table_exercise: [
         {
             userEmail:'',
-            0:'',
-            1:'',
-            2:'',
-            3:'',
-            4:'',
-            5:'',
-            6:'',
+            0:'1',
+            1:'1',
+            2:'0',
+            3:'2',
+            4:'0',
+            5:'2',
+            6:'1',
         }
     ],
 
@@ -94,38 +94,22 @@ app.post('/register', (req, res) => {
 })
 
 app.get("/activity", (req, res) => {
-
+    if(req.body.email === database.table_activity.email){
+        res.json(database.table_activity[0])
+    }
+    else{
+        res.status(404).json('get activity failure')
+    }
 })
 
-// const initialState = {
-//     name: '',
-//     email: '',
-//     password: '',
-  
-//     weight : 0,
-//     BMR : 0,
-//     isSignIn : false,
-//     route: 'home', // sign in, sign up, weight, activity, exercise, nutrition
-  
-//     deficit : 0,
-//     activity : [], // store week activity, like: ['0', '1', '0', '1', '0', '3', '2']
-//     exercise : [], // store week exercise, like: ['0', '1', '0', '1', '0', '3', '2']
-    
-//     protein : 0,
-//     oil : 0,
-//     dailyCalorie : [], // 7 days daily calorie
-//     dailyCarbon : [], // 7 days daily carbohydrate
-  
-//     checkedActivity : initialchecked,
-//     checkedExercise : initialchecked,
-//     // the default of checked attribute of options
-  
-//     modifySpeedUp: false,
-//     modifySlowDown: false, 
-//     modifyOption: 0,
-//   }
-  
-
+app.get("/exercise", (req, res) => {
+    if(req.body.email === database.table_exercise.email){
+        res.json(database.table_exercise[0])
+    }
+    else{
+        res.status(404).json('get exercise failure')
+    }
+})
 
 
 // set port

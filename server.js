@@ -20,10 +20,11 @@ app.use(express.json());
 app.get('/', (req, res) => {
     res.json("hi there!")
 })
-// get 不能有body。body-parser用在post和put, 跟get, delete無關
+// **** get 不能有body，要傳的資料會放在網址。 (有放body會出現syntax error)
+// **** body-parser用在post和put, 跟get, delete無關
+
 
 // create an object variable to mimic database
-
 // database => 大資料庫 {  }
 // users => table [ ] = 想成都是object, 只是這個table需要有名字，所以用
 // users[0] => table裡面一筆資料 { }
@@ -46,7 +47,7 @@ const database = {
     ],
     table_activity: [
         {
-            userEmail:'',
+            userEmail:'marina@gmail.com',
             0:'0',
             1:'1',
             2:'0',
@@ -58,7 +59,7 @@ const database = {
     ],
     table_exercise: [
         {
-            userEmail:'',
+            userEmail:'marina@gmail.com',
             0:'1',
             1:'1',
             2:'0',
@@ -104,25 +105,26 @@ app.post('/register', (req, res) => {
     }
 })
 
-// app.get("/activity", (req, res) => {
-//     console.log(req.body.email);
-//     if(req.body.email === database.table_activity[0].userEmail){
-//         console.log(database.table_activity[0]);
-//         res.json(database.table_activity[0]);
-//     }
-//     else{
-//         res.status(404).json('get activity failure');;
-//     }
-// })
+app.post("/activity", (req, res) => {
+    console.log(req.body.email);
+    if(req.body.email === database.table_activity[0].userEmail){
+        console.log(database.table_activity[0]);
+        res.json(database.table_activity[0]);
+    }
+    else{
+        res.status(404).json('get activity failure');;
+    }
+})
 
-// app.get("/exercise", (req, res) => {
-//     if(req.body.email === database.table_exercise.email){
-//         res.json(database.table_exercise[0])
-//     }
-//     else{
-//         res.status(404).json('get exercise failure')
-//     }
-// })
+
+app.post("/exercise", (req, res) => {
+    if(req.body.email === database.table_exercise[0].userEmail){
+        res.json(database.table_exercise[0])
+    }
+    else{
+        res.status(404).json('get exercise failure')
+    }
+})
 
 // "/calculate" get: 
 // 0. if weight = 0，從資料庫叫weight, deficit。

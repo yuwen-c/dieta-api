@@ -6,8 +6,8 @@ const app = express(); // create one
 // ok "/" get: to see if it's working
 // ok "/signin" post: sign in, return user 
 // ok "/register" post: register
-// "/activity" get: get activity data last week from database
-// "/exercise" get: get exercise data
+// ok"/activity" get: get activity data last week from database
+// ok"/exercise" get: get exercise data
 // "/calculate" get: 0. if weight = 0，從資料庫叫weight, deficit。1. do calculation, 2. show it on page (前端)
 //     3. save 所有數據 to database(weight, totalDeficit, 每日總熱量, 每日碳水量, 活動運動量, )
 // "/result" get: 從database叫出上次儲存的結果
@@ -69,8 +69,8 @@ const database = {
 } 
 
 app.post('/signin', (req, res) => {
-    if(req.body.email === database.users[0].email && req.body.password ===database.users[0].password){
-        res.json(database.users[0])
+    if(req.body.email === database.table_userLogin[0].email && req.body.password ===database.table_userLogin[0].password){
+        res.json(database.table_users[0])
     }
     else{
         res.status(404).json('signin failed');
@@ -78,15 +78,22 @@ app.post('/signin', (req, res) => {
 })
 
 app.post('/register', (req, res) => {
+    console.log("register", req.body.name)
     const {name, email, password} = req.body;
     if(name && email && password){
-        database.users.push({
+        database.table_userLogin.push({
             id: 124,
-            name: name, 
             email: email,
             password: password
         });
-        res.json(database.users[database.users.length-1]);
+        database.table_users.push({
+            id: 124,
+            name: name, 
+            email: email,
+            weight: 0,
+            deficit: 0,
+        });
+        res.json(database.table_users[database.table_users.length-1]);
     }
     else{
         res.status(404).json("failed!!")
@@ -94,7 +101,9 @@ app.post('/register', (req, res) => {
 })
 
 app.get("/activity", (req, res) => {
-    if(req.body.email === database.table_activity.email){
+    console.log(req.body.email);
+    if(req.body.email === database.table_activity[0].userEmail){
+        console.log(database.table_activity[0])
         res.json(database.table_activity[0])
     }
     else{
@@ -110,6 +119,18 @@ app.get("/exercise", (req, res) => {
         res.status(404).json('get exercise failure')
     }
 })
+
+// "/calculate" get: 
+// 0. if weight = 0，從資料庫叫weight, deficit。
+// 1. do calculation, 
+// 2. show it on page (前端)
+// 3. save 所有數據 to database(weight, totalDeficit, 每日總熱量, 每日碳水量, 活動運動量, )
+app.get("/calculate", (req, res) => {
+
+})
+
+// "/result" get: 從database叫出上次儲存的結果
+// 還要加上存結果的table
 
 
 // set port

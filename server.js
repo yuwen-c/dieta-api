@@ -5,7 +5,7 @@ const app = express(); // create one
 // plan:
 // ok "/" get: to see if it's working
 // ok "/signin" post: sign in, return user 
-// "/register" post: register
+// ok "/register" post: register
 // "/loadActivity" get: get activity data last week from database
 // "/loadExercise" get: get exercise data
 // "/calculate" get: 0. if weight = 0，從資料庫叫weight, deficit。1. do calculation, 2. show it on page (前端)
@@ -20,15 +20,52 @@ app.use(express.urlencoded({extended: false}));
 app.use(express.json());
 
 // create an object variable to mimic database
+
+// database => 大資料庫 {  }
+// users => table [ ] = 想成都是object, 只是這個table需要有名字，所以用
+// users[0] => table裡面一筆資料 { }
+// users[0] 裡面的pair: { }的property 是欄位名稱，value是資料
 const database = {
-    users: [
+    table_userLogin: [
         {
             id:123,
-            name:'marina',
             email: 'marina@gmail.com',
             password: '1111',
         },
-    ]
+    ],
+    table_users:[
+        {
+            name:'marina',
+            email: 'marina@gmail.com',
+            weight: 0,
+            deficit: 0,
+        }
+    ],
+    table_activity: [
+        {
+            userEmail:'',
+            0:'',
+            1:'',
+            2:'',
+            3:'',
+            4:'',
+            5:'',
+            6:'',
+        }
+    ],
+    table_exercise: [
+        {
+            userEmail:'',
+            0:'',
+            1:'',
+            2:'',
+            3:'',
+            4:'',
+            5:'',
+            6:'',
+        }
+    ],
+
 } 
 
 app.post('/signin', (req, res) => {
@@ -56,7 +93,10 @@ app.post('/register', (req, res) => {
     }
 })
 
-// 待修改
+app.get("/activity", (req, res) => {
+
+})
+
 // const initialState = {
 //     name: '',
 //     email: '',

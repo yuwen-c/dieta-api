@@ -1,4 +1,5 @@
 const express = require('express'); // import module
+const cors = require('cors');
 
 const app = express(); // create one
 
@@ -8,14 +9,14 @@ const app = express(); // create one
 // ok "/register" post: register
 // ok"/activity" post: get activity data last week from database
 // ok"/exercise" post: get exercise data
-// "/calculate" put: 0. if weight = 0，從資料庫叫weight, deficit。1. do calculation, 2. show it on page (前端)
+// ok"/calculate" put: 0. if weight = 0，從資料庫叫weight, deficit。1. do calculation, 2. show it on page (前端)
 //     3. save 所有數據 to database(weight, totalDeficit, 每日總熱量, 每日碳水量, 活動運動量, )
-// "/result" post: 從database叫出上次儲存的結果
+// ok"/result" post: 從database叫出上次儲存的結果
 
 
 app.use(express.urlencoded({extended: false}));
 app.use(express.json());
-
+app.use(cors());
 
 app.get('/', (req, res) => {
     res.json("hi there!")
@@ -155,10 +156,6 @@ app.post("/exercise", (req, res) => {
 })
 
 // "/calculate" post: 
-// 0. if weight = 0，從資料庫叫weight, deficit。=> 不會有這情形
-// 1. do calculation in front
-// 2. show it on page (前端)
-// 3. save 所有數據 to database(weight, totalDeficit, 每日總熱量, 每日碳水量, 活動運動量, )
 app.put("/calculate", (req, res) => {
     if(req.body.email === database.table_carbohydrate[0].userEmail){
         let carbohydrateObj = {};
@@ -178,7 +175,7 @@ app.put("/calculate", (req, res) => {
     res.json("ok")
 })
 
-// "/result" get: 從database叫出上次儲存的結果
+// "/result" : post 從database叫出上次儲存的結果
 app.post("/result", (req, res) => {
     if(req.body.email === database.table_totalCalorie[0].userEmail){
         res.json([database.table_totalCalorie[0], database.table_carbohydrate[0]]);

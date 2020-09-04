@@ -6,11 +6,11 @@ const app = express(); // create one
 // ok "/" get: to see if it's working
 // ok "/signin" post: sign in, return user 
 // ok "/register" post: register
-// ok"/activity" get: get activity data last week from database
-// ok"/exercise" get: get exercise data
-// "/calculate" get: 0. if weight = 0，從資料庫叫weight, deficit。1. do calculation, 2. show it on page (前端)
+// ok"/activity" post: get activity data last week from database
+// ok"/exercise" post: get exercise data
+// "/calculate" put: 0. if weight = 0，從資料庫叫weight, deficit。1. do calculation, 2. show it on page (前端)
 //     3. save 所有數據 to database(weight, totalDeficit, 每日總熱量, 每日碳水量, 活動運動量, )
-// "/result" get: 從database叫出上次儲存的結果
+// "/result" post: 從database叫出上次儲存的結果
 
 
 app.use(express.urlencoded({extended: false}));
@@ -69,6 +69,34 @@ const database = {
             6:'1',
         }
     ],
+    table_carbohydrate: [
+        {
+            userEmail: 'marina@gmail.com',
+            day1:0,
+            day2:0,
+            day3:0,
+            day4:0,
+            day5:0,
+            day6:0,
+            day7:0,
+
+        }
+    ],
+    table_totalCalorie: [
+        {
+            userEmail: 'marina@gmail.com',
+            // protein: 0,
+            // oil:0,
+
+            day1:0,
+            day2:0,
+            day3:0,
+            day4:0,
+            day5:0,
+            day6:0,
+            day7:0,
+        }
+    ]
 
 } 
 
@@ -126,11 +154,30 @@ app.post("/exercise", (req, res) => {
     }
 })
 
-// "/calculate" get: 
-// 0. if weight = 0，從資料庫叫weight, deficit。
-// 1. do calculation, 
+// "/calculate" post: 
+// 0. if weight = 0，從資料庫叫weight, deficit。=> 不會有這情形
+// 1. do calculation in front
 // 2. show it on page (前端)
 // 3. save 所有數據 to database(weight, totalDeficit, 每日總熱量, 每日碳水量, 活動運動量, )
+app.put("/calculate", (req, res) => {
+    if(req.body.email === database.table_carbohydrate[0].userEmail){
+        let carbohydrateObj = {};
+        req.body.carbohydrate.map((item, index) => {
+            carbohydrateObj = Object.assign(carbohydrateObj, {[`day${index+1}`] : item})
+        })
+        database.table_carbohydrate[0] = Object.assign(database.table_carbohydrate[0], carbohydrateObj);
+        console.log(database.table_carbohydrate[0])
+
+        let totalCalorie = {};
+        req.body.totalCalorie.map((item, index) => {
+            totalCalorie = Object.assign(totalCalorie, {[`day${index+1}`]: item});
+        });
+        database.table_totalCalorie[0] = Object.assign(database.table_totalCalorie[0], totalCalorie)
+        console.log(database.table_totalCalorie[0])
+    }
+    res.json("ok")
+})
+
 // "/result" get: 從database叫出上次儲存的結果
 // 還要加上存結果的table
 

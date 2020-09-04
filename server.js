@@ -182,7 +182,6 @@ app.put("/calculate", (req, res) => {
 app.post("/result", (req, res) => {
     if(req.body.email === database.table_totalCalorie[0].userEmail){
         res.json([database.table_totalCalorie[0], database.table_carbohydrate[0]]);
-
     }
 })
 

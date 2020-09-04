@@ -166,20 +166,25 @@ app.put("/calculate", (req, res) => {
             carbohydrateObj = Object.assign(carbohydrateObj, {[`day${index+1}`] : item})
         })
         database.table_carbohydrate[0] = Object.assign(database.table_carbohydrate[0], carbohydrateObj);
-        console.log(database.table_carbohydrate[0])
+        // console.log(database.table_carbohydrate[0])
 
         let totalCalorie = {};
         req.body.totalCalorie.map((item, index) => {
             totalCalorie = Object.assign(totalCalorie, {[`day${index+1}`]: item});
         });
         database.table_totalCalorie[0] = Object.assign(database.table_totalCalorie[0], totalCalorie)
-        console.log(database.table_totalCalorie[0])
+        // console.log(database.table_totalCalorie[0])
     }
     res.json("ok")
 })
 
 // "/result" get: 從database叫出上次儲存的結果
-// 還要加上存結果的table
+app.post("/result", (req, res) => {
+    if(req.body.email === database.table_totalCalorie[0].userEmail){
+        res.json([database.table_totalCalorie[0], database.table_carbohydrate[0]]);
+
+    }
+})
 
 
 // set port

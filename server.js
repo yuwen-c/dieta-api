@@ -111,8 +111,8 @@ app.post('/signin', (req, res) => {
 })
 
 
-app.post('/register', (req, res) => {
-    console.log("register", req.body.name);
+app.post('/signup', (req, res) => {
+    console.log("signup", req.body.name);
     const {name, email, password} = req.body;
     if(name && email && password){
         database.table_userLogin.push({

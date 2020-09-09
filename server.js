@@ -13,10 +13,10 @@ const app = express(); // create one
 //     3. save 所有數據 to database(weight, totalDeficit, 每日總熱量, 每日碳水量, 活動運動量, )
 // ok"/result" post: 從database叫出上次儲存的結果
 
-
+app.use(cors());
 app.use(express.urlencoded({extended: false}));
 app.use(express.json());
-app.use(cors());
+
 
 app.get('/', (req, res) => {
     res.json("hi there!")
@@ -49,9 +49,9 @@ const database = {
     table_activity: [
         {
             userEmail:'marina@gmail.com',
-            0:'0',
+            0:'1',
             1:'1',
-            2:'0',
+            2:'1',
             3:'1',
             4:'0',
             5:'3',
@@ -61,8 +61,8 @@ const database = {
     table_exercise: [
         {
             userEmail:'marina@gmail.com',
-            0:'1',
-            1:'1',
+            0:'0',
+            1:'0',
             2:'0',
             3:'2',
             4:'0',
@@ -134,8 +134,9 @@ app.post('/signup', (req, res) => {
     }
 })
 
+// load activity record
 app.post("/activity", (req, res) => {
-    console.log(req.body.email);
+    console.log("req.body", req.body);
     if(req.body.email === database.table_activity[0].userEmail){
         console.log(database.table_activity[0]);
         res.json(database.table_activity[0]);
@@ -145,7 +146,7 @@ app.post("/activity", (req, res) => {
     }
 })
 
-
+// load exercise record
 app.post("/exercise", (req, res) => {
     if(req.body.email === database.table_exercise[0].userEmail){
         res.json(database.table_exercise[0])
@@ -159,18 +160,16 @@ app.post("/exercise", (req, res) => {
 app.put("/calculate", (req, res) => {
     if(req.body.email === database.table_carbohydrate[0].userEmail){
         let carbohydrateObj = {};
-        req.body.carbohydrate.map((item, index) => {
+        req.body.dailyCarbon.map((item, index) => {
             carbohydrateObj = Object.assign(carbohydrateObj, {[`day${index+1}`] : item})
         })
         database.table_carbohydrate[0] = Object.assign(database.table_carbohydrate[0], carbohydrateObj);
-        // console.log(database.table_carbohydrate[0])
 
         let totalCalorie = {};
-        req.body.totalCalorie.map((item, index) => {
+        req.body.dailyCalorie.map((item, index) => {
             totalCalorie = Object.assign(totalCalorie, {[`day${index+1}`]: item});
         });
         database.table_totalCalorie[0] = Object.assign(database.table_totalCalorie[0], totalCalorie)
-        // console.log(database.table_totalCalorie[0])
     }
     res.json("ok")
 })

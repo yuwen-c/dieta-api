@@ -73,13 +73,13 @@ const database = {
     table_carbohydrate: [
         {
             userEmail: 'marina@gmail.com',
-            day1:0,
-            day2:0,
-            day3:0,
-            day4:0,
-            day5:0,
-            day6:0,
-            day7:0,
+            day1:84,
+            day2:84,
+            day3:84,
+            day4:145,
+            day5:54,
+            day6:205,
+            day7:145,
 
         }
     ],
@@ -89,13 +89,13 @@ const database = {
             // protein: 0,
             // oil:0,
 
-            day1:0,
-            day2:0,
-            day3:0,
-            day4:0,
-            day5:0,
-            day6:0,
-            day7:0,
+            day1:1273,
+            day2:1273,
+            day3:1273,
+            day4:1515,
+            day5:1152,
+            day6:1757,
+            day7:1515,
         }
     ]
 
@@ -156,7 +156,7 @@ app.post("/exercise", (req, res) => {
     }
 })
 
-// "/calculate" post: 
+// "/calculate": 
 app.put("/calculate", (req, res) => {
     if(req.body.email === database.table_carbohydrate[0].userEmail){
         let carbohydrateObj = {};
@@ -176,8 +176,13 @@ app.put("/calculate", (req, res) => {
 
 // "/result" : post 從database叫出上次儲存的結果
 app.post("/result", (req, res) => {
+    console.log(req.body)
     if(req.body.email === database.table_totalCalorie[0].userEmail){
-        res.json([database.table_totalCalorie[0], database.table_carbohydrate[0]]);
+        // res.json([database.table_totalCalorie[0], database.table_carbohydrate[0]]);
+        res.json({
+            dailyCalorie: database.table_totalCalorie[0],
+            dailyCarbon: database.table_carbohydrate[0]
+        })
     }
 })
 

@@ -176,9 +176,7 @@ app.put("/calculate", (req, res) => {
 
 // "/result" : post 從database叫出上次儲存的結果
 app.post("/result", (req, res) => {
-    console.log(req.body)
     if(req.body.email === database.table_totalCalorie[0].userEmail){
-        // res.json([database.table_totalCalorie[0], database.table_carbohydrate[0]]);
         res.json({
             dailyCalorie: database.table_totalCalorie[0],
             dailyCarbon: database.table_carbohydrate[0]

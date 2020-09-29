@@ -136,9 +136,8 @@ app.post('/signup', (req, res) => {
 
 // load activity record
 app.post("/activity", (req, res) => {
-    console.log("req.body", req.body);
     if(req.body.email === database.table_activity[0].userEmail){
-        console.log(database.table_activity[0]);
+        //console.log(database.table_activity[0]);
         res.json(database.table_activity[0]);
     }
     else{
@@ -149,7 +148,8 @@ app.post("/activity", (req, res) => {
 // load exercise record
 app.post("/exercise", (req, res) => {
     if(req.body.email === database.table_exercise[0].userEmail){
-        res.json(database.table_exercise[0])
+        //console.log(database.table_exercise[0]);
+        res.json(database.table_exercise[0]);
     }
     else{
         res.status(404).json('get exercise failure')

@@ -186,4 +186,9 @@ app.post("/result", (req, res) => {
 
 
 // set port
-app.listen(3000, () => {console.log("server is running on 3000!")});
+// app.listen(3000, () => {console.log("server is running on 3000!")});
+
+// make a port for heroku
+app.listen(process.env.PORT || 3000, () => {
+    console.log(`'it's running on PORT ${process.env.PORT}`);
+})

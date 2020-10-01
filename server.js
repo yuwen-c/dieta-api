@@ -1,17 +1,21 @@
 const express = require('express'); // import module
 const cors = require('cors');
+const knex = require('knex');
 
 const app = express(); // create one
 
-// plan:
-// ok "/" get: to see if it's working
-// ok "/signin" post: sign in, return user 
-// ok "/register" post: register
-// ok"/activity" post: get activity data last week from database
-// ok"/exercise" post: get exercise data
-// ok"/calculate" put: 0. if weight = 0，從資料庫叫weight, deficit。1. do calculation, 2. show it on page (前端)
-//     3. save 所有數據 to database(weight, totalDeficit, 每日總熱量, 每日碳水量, 活動運動量, )
-// ok"/result" post: 從database叫出上次儲存的結果
+const db = knex({
+    client: 'pg',
+    connection: {
+      host : '127.0.0.1',
+      user : '',
+      password : '',
+      database : 'Dieta'
+    }
+  });
+
+
+
 
 app.use(cors());
 app.use(express.urlencoded({extended: false}));
@@ -19,10 +23,10 @@ app.use(express.json());
 
 
 app.get('/', (req, res) => {
-    res.json("hi there!")
+    db.select('*').from('users')
+    .then(result => res.json(result))
+    // res.json("hi there!")
 })
-// **** get 不能有body，要傳的資料會放在網址。 (有放body會出現syntax error)
-// **** body-parser用在post和put, 跟get, delete無關
 
 
 // create an object variable to mimic database
@@ -48,8 +52,8 @@ const database = {
     ],
     table_activity: [
         {
-            userEmail:'marina@gmail.com',
-            0:'1',
+            userEmail:'marina@gmail.com',  //table column改為email
+            0:'1',  // table column 改為day1, day2...
             1:'1',
             2:'1',
             3:'1',
@@ -190,5 +194,15 @@ app.post("/result", (req, res) => {
 
 // make a port for heroku
 app.listen(process.env.PORT || 3000, () => {
-    console.log(`'it's running on PORT ${process.env.PORT}`);
+    console.log(`it's running on PORT ${process.env.PORT}`);
 })
+
+// plan:
+// ok "/" get: to see if it's working
+// ok "/signin" post: sign in, return user 
+// ok "/register" post: register
+// ok"/activity" post: get activity data last week from database
+// ok"/exercise" post: get exercise data
+// ok"/calculate" put: 0. if weight = 0，從資料庫叫weight, deficit。1. do calculation, 2. show it on page (前端)
+//     3. save 所有數據 to database(weight, totalDeficit, 每日總熱量, 每日碳水量, 活動運動量, )
+// ok"/result" post: 從database叫出上次儲存的結果

@@ -22,6 +22,8 @@ app.use(express.urlencoded({extended: false}));
 app.use(express.json());
 
 
+console.log("db", db.select('*').from('users'));
+
 app.get('/', (req, res) => {
     db.select('*').from('users')
     .then(result => res.json(result))

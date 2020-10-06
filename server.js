@@ -22,7 +22,7 @@ app.use(express.urlencoded({extended: false}));
 app.use(express.json());
 
 
-console.log("db", db.select('*').from('users'));
+// console.log("db", db.select('*').from('users'));
 
 app.get('/', (req, res) => {
     db.select('*').from('users')
@@ -116,28 +116,54 @@ app.post('/signin', (req, res) => {
     }
 })
 
-
+// use transaction to add one data to two tables: userLogin, users
 app.post('/signup', (req, res) => {
-    console.log("signup", req.body.name);
-    const {name, email, password} = req.body;
-    if(name && email && password){
-        database.table_userLogin.push({
-            id: 124,
+    const {name, email, password} =  req.body;
+    // method 1, trx as a query builder
+    db.transaction((trx) => {
+        return trx
+        .insert({
             email: email,
             password: password
-        });
-        database.table_users.push({
-            id: 124,
-            name: name, 
-            email: email,
-            weight: 0,
-            deficit: 0,
-        });
-        res.json(database.table_users[database.table_users.length-1]);
-    }
-    else{
-        res.status(404).json("registration failed!!")
-    }
+        }, 'email')
+        .into('userlogin')
+        .then((loginEmail) => {
+            return trx('users').insert({
+                email: loginEmail[0],
+                name: name
+            }, '*')
+        })
+    })
+    .then(user => {
+        res.json(user[0])
+    })
+    .catch(error => console.log(error));
+
+    // method 2: trx as a transaction obj:
+    // db.transaction((trx) => {
+    //     db.insert({
+    //         email: email,
+    //         password: password
+    //     }, ['email'])
+    //     .into('userlogin')
+    //     .transacting(trx)
+    //     .then((loginEmail) => {
+    //         return db('users').insert({
+    //             email: loginEmail[0],
+    //             name: name,
+    //         }, ['*'])
+    //         .transacting(trx)
+    //     })
+    //     .then(trx.commit)
+    //     .catch(trx.rollback)
+    // })
+    // .then((user)=> {
+    //     res.json(user[0])
+    //     console.log(user[0]);
+    // })
+    // .catch((error)=> {
+    //     console.log(error)
+    // });
 })
 
 // load activity record

@@ -108,12 +108,22 @@ const database = {
 } 
 
 app.post('/signin', (req, res) => {
-    if(req.body.email === database.table_userLogin[0].email && req.body.password ===database.table_userLogin[0].password){
-        res.json(database.table_users[0])
-    }
-    else{
-        res.status(404).json('signin failed');
-    }
+    const {email, password} = req.body;
+    db('userlogin').where({
+        email: email
+    })
+    .then(user => {
+        if (user[0].password === password){
+            db('users').where({
+                email: user[0].email
+            })
+            .then(userData => {res.json(userData[0])})
+        }
+        else{
+            res.json("wrong password------need change later")
+        }
+    });
+
 })
 
 // use transaction to add one data to two tables: userLogin, users

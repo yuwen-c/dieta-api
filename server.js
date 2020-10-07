@@ -1,6 +1,7 @@
 const express = require('express'); // import module
 const cors = require('cors');
 const knex = require('knex');
+const bcrypt = require('bcrypt-nodejs');
 
 const app = express(); // create one
 
@@ -109,11 +110,15 @@ const database = {
 
 app.post('/signin', (req, res) => {
     const {email, password} = req.body;
+
+    const hash = bcrypt.hashSync(password);
+
     db('userlogin').where({
         email: email
     })
     .then(user => {
-        if (user[0].password === password){
+        const compare = bcrypt.compareSync(user[0].password, hash) // 比對
+        if (compare){
             db('users').where({
                 email: user[0].email
             })

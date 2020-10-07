@@ -108,20 +108,15 @@ const database = {
 
 } 
 
+// compare password and return user data to front end
 app.post('/signin', (req, res) => {
     const {email, password} = req.body;
-    const hash = bcrypt.hashSync(password);
-
-    // 如果是比對 (儲存的hash, 輸入的input轉hash) false
-    // 如果是比對 (儲存的hash, 輸入的input) bcrypt error
-    // 正確應比對 (輸入的input, 儲存的hash)
     db('userlogin').where({
         email: email
     })
     .then(user => {
-        // compare the saved hash with input password from front end
-        const compare = bcrypt.compareSync(password, user[0].password) 
-        if (compare){
+        const isValid = bcrypt.compareSync(password, user[0].password) 
+        if (isValid){
             db('users').where({
                 email: user[0].email
             })

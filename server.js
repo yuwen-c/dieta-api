@@ -134,12 +134,14 @@ app.post('/signin', (req, res) => {
 // use transaction to add one data to two tables: userLogin, users
 app.post('/signup', (req, res) => {
     const {name, email, password} =  req.body;
+    const hash = bcrypt.hashSync(password);
+
     // method 1, trx as a query builder
     db.transaction((trx) => {
         return trx
         .insert({
             email: email,
-            password: password
+            password: hash
         }, 'email')
         .into('userlogin')
         .then((loginEmail) => {
@@ -158,7 +160,7 @@ app.post('/signup', (req, res) => {
     // db.transaction((trx) => {
     //     db.insert({
     //         email: email,
-    //         password: password
+    //         password: hash
     //     }, ['email'])
     //     .into('userlogin')
     //     .transacting(trx)

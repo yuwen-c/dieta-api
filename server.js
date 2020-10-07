@@ -141,6 +141,7 @@ app.post('/signin', (req, res) => {
 })
 
 // use transaction to add one data to two tables: userLogin, users
+// also, create a user in every table with default value 0:
 app.post('/signup', (req, res) => {
     const {name, email, password} =  req.body;
     const hash = bcrypt.hashSync(password);
@@ -154,10 +155,30 @@ app.post('/signup', (req, res) => {
         }, 'email')
         .into('userLogin')
         .then((loginEmail) => {
-            return trx('users').insert({
-                email: loginEmail[0],
-                name: name
-            }, '*')
+            return trx('activity').insert({
+                email: loginEmail[0]
+            }, 'email')
+            .then((loginEmail) => {
+                return trx('exercise').insert({
+                    email: loginEmail[0]
+                }, 'email')
+                .then((loginEmail) => {
+                    return trx('carbohydrate').insert({
+                        email: loginEmail[0]
+                    }, 'email')
+                    .then((loginEmail) => {
+                        return trx('totalCalorie').insert({
+                            email: loginEmail[0]
+                        }, 'email')
+                        .then((loginEmail) => {
+                            return trx('users').insert({
+                                email: loginEmail[0],
+                                name: name
+                            }, '*')
+                        })
+                    })
+                })
+            })
         })
     })
     .then(user => {

@@ -108,25 +108,36 @@ const database = {
 
 } 
 
+// select user:
+const selectUser = (email, table) => {
+    db(table).where({
+        email: email
+    })
+}
+
 // compare password and return user data to front end
 app.post('/signin', (req, res) => {
     const {email, password} = req.body;
-    db('userlogin').where({
+    console.log(req.body)
+    db('userLogin').where({
         email: email
     })
     .then(user => {
-        const isValid = bcrypt.compareSync(password, user[0].password) 
-        if (isValid){
-            db('users').where({
-                email: user[0].email
-            })
-            .then(userData => {res.json(userData[0])})
+        if(user.length){
+            const isValid = bcrypt.compareSync(password, user[0].password) 
+            if (isValid){
+                db('users').where({
+                    email: user[0].email
+                })
+                .then(userData => {res.json(userData[0])})
+            }
+            else{
+                res.json("wrong password------need change later")
+            }
         }
-        else{
-            res.json("wrong password------need change later")
-        }
-    });
-
+        else(res.json("no such user"))
+    })
+    .catch(console.log)
 })
 
 // use transaction to add one data to two tables: userLogin, users
@@ -141,7 +152,7 @@ app.post('/signup', (req, res) => {
             email: email,
             password: hash
         }, 'email')
-        .into('userlogin')
+        .into('userLogin')
         .then((loginEmail) => {
             return trx('users').insert({
                 email: loginEmail[0],
@@ -160,7 +171,7 @@ app.post('/signup', (req, res) => {
     //         email: email,
     //         password: hash
     //     }, ['email'])
-    //     .into('userlogin')
+    //     .into('userLogin')
     //     .transacting(trx)
     //     .then((loginEmail) => {
     //         return db('users').insert({
@@ -203,22 +214,33 @@ app.post("/exercise", (req, res) => {
     }
 })
 
-// "/calculate": 
-app.put("/calculate", (req, res) => {
-    if(req.body.email === database.table_carbohydrate[0].userEmail){
-        let carbohydrateObj = {};
-        req.body.dailyCarbon.map((item, index) => {
-            carbohydrateObj = Object.assign(carbohydrateObj, {[`day${index+1}`] : item})
-        })
-        database.table_carbohydrate[0] = Object.assign(database.table_carbohydrate[0], carbohydrateObj);
+// 一開始就要先建立一筆空白資料嗎？等於之後用修改的put；
+// 或是，等儲存結果時再新建一筆資料？insert
 
-        let totalCalorie = {};
-        req.body.dailyCalorie.map((item, index) => {
-            totalCalorie = Object.assign(totalCalorie, {[`day${index+1}`]: item});
-        });
-        database.table_totalCalorie[0] = Object.assign(database.table_totalCalorie[0], totalCalorie)
-    }
-    res.json("ok")
+// 儲存一週的碳水量，一週的總熱量
+// 「還要儲存活動量、運動量、更新熱量赤字！沒寫到。」
+// 或，用if/else區分，如果有該筆使用者的話....
+app.put("/calculate", (req, res) => {
+    const {email} = req.body;
+
+    selectUser(email, carbohydrate)
+    .then(console.log)
+    .catch(console.log);
+
+    // if(req.body.email === database.table_carbohydrate[0].userEmail){
+    //     let carbohydrateObj = {};
+    //     req.body.dailyCarbon.map((item, index) => {
+    //         carbohydrateObj = Object.assign(carbohydrateObj, {[`day${index+1}`] : item})
+    //     })
+    //     database.table_carbohydrate[0] = Object.assign(database.table_carbohydrate[0], carbohydrateObj);
+
+    //     let totalCalorie = {};
+    //     req.body.dailyCalorie.map((item, index) => {
+    //         totalCalorie = Object.assign(totalCalorie, {[`day${index+1}`]: item});
+    //     });
+    //     database.table_totalCalorie[0] = Object.assign(database.table_totalCalorie[0], totalCalorie)
+    // }
+    // res.json("ok")
 })
 
 // "/result" : post 從database叫出上次儲存的結果

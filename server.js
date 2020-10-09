@@ -108,13 +108,6 @@ const database = {
 
 } 
 
-// select user:
-const selectUser = (email, table) => {
-    db(table).where({
-        email: email
-    })
-}
-
 // compare password and return user data to front end
 app.post('/signin', (req, res) => {
     const {email, password} = req.body;
@@ -215,33 +208,73 @@ app.post("/exercise", (req, res) => {
     }
 })
 
-// 一開始就要先建立一筆空白資料嗎？等於之後用修改的put；
-// 或是，等儲存結果時再新建一筆資料？insert
-
-// 儲存一週的碳水量，一週的總熱量
-// 「還要儲存活動量、運動量、更新熱量赤字！沒寫到。」
-// 或，用if/else區分，如果有該筆使用者的話....
+// save data to database: weight, deficit, activity, exercise, carbohydrate, totalcalorie
 app.put("/calculate", (req, res) => {
-    const {email} = req.body;
+    const {email, weight, deficit, activity, exercise, dailyCarbon, dailyCalorie} = req.body;
+    console.log(req.body);
 
-    selectUser(email, carbohydrate)
-    .then(console.log)
-    .catch(console.log);
+    db('users')
+    .where({ email: email })
+    .update({
+        weight: weight,
+        deficit: deficit        
+    })
+    .then(console.log);
 
-    // if(req.body.email === database.table_carbohydrate[0].userEmail){
-    //     let carbohydrateObj = {};
-    //     req.body.dailyCarbon.map((item, index) => {
-    //         carbohydrateObj = Object.assign(carbohydrateObj, {[`day${index+1}`] : item})
-    //     })
-    //     database.table_carbohydrate[0] = Object.assign(database.table_carbohydrate[0], carbohydrateObj);
+    db('activity')
+    .where({ email: email})
+    .update({
+        day1: activity[0],
+        day2: activity[1],
+        day3: activity[2],
+        day4: activity[3],
+        day5: activity[4],
+        day6: activity[5],
+        day7: activity[6],
+    })
+    .then(console.log);
 
-    //     let totalCalorie = {};
-    //     req.body.dailyCalorie.map((item, index) => {
-    //         totalCalorie = Object.assign(totalCalorie, {[`day${index+1}`]: item});
-    //     });
-    //     database.table_totalCalorie[0] = Object.assign(database.table_totalCalorie[0], totalCalorie)
-    // }
-    // res.json("ok")
+// str 轉 int? 好像不用轉也可以？
+    db('exercise')
+    .where({ email: email })
+    .update({
+        day1: exercise[0],
+        day2: exercise[1],
+        day3: exercise[2],
+        day4: exercise[3],
+        day5: exercise[4],
+        day6: exercise[5],
+        day7: exercise[6]
+    })
+    .then(console.log);
+
+    db('carbohydrate')
+    .where({ email: email })
+    .update({
+        day1: dailyCarbon[0],
+        day2: dailyCarbon[1],
+        day3: dailyCarbon[2],
+        day4: dailyCarbon[3],
+        day5: dailyCarbon[4],
+        day6: dailyCarbon[5],
+        day7: dailyCarbon[6]
+    })
+    .then(console.log);
+
+    db('totalcalorie')
+    .where({ email: email })
+    .update({
+        day1: dailyCalorie[0],
+        day2: dailyCalorie[1],
+        day3: dailyCalorie[2],
+        day4: dailyCalorie[3],
+        day5: dailyCalorie[4],
+        day6: dailyCalorie[5],
+        day7: dailyCalorie[6]
+    })
+    .then(console.log);
+
+    res.json("ok");
 })
 
 // "/result" : post 從database叫出上次儲存的結果

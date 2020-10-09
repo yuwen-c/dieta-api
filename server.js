@@ -154,32 +154,12 @@ app.post('/signup', (req, res) => {
             password: hash
         }, 'email')
         .into('userlogin')
-        // .then((loginEmail) => {
-        //     return trx('activity').insert({
-        //         email: loginEmail[0]
-        //     }, 'email')
-        //     .then((loginEmail) => {
-        //         return trx('exercise').insert({
-        //             email: loginEmail[0]
-        //         }, 'email')
-        //         .then((loginEmail) => {
-        //             return trx('carbohydrate').insert({
-        //                 email: loginEmail[0]
-        //             }, 'email')
-        //             .then((loginEmail) => {
-        //                 return trx('totalCalorie').insert({
-        //                     email: loginEmail[0]
-        //                 }, 'email')
-                        .then((loginEmail) => {
-                            return trx('users').insert({
-                                email: loginEmail[0],
-                                name: name
-                            }, '*')
-                        })
-                    // })
-                // })
-            // })
-        // })
+        .then((loginEmail) => {
+            return trx('users').insert({
+                email: loginEmail[0],
+                name: name
+            }, '*')
+        })
     })
     .then(user => {
         res.json(user[0])

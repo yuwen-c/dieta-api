@@ -119,7 +119,7 @@ const selectUser = (email, table) => {
 app.post('/signin', (req, res) => {
     const {email, password} = req.body;
     console.log(req.body)
-    db('userLogin').where({
+    db('userlogin').where({
         email: email
     })
     .then(user => {
@@ -140,7 +140,7 @@ app.post('/signin', (req, res) => {
     .catch(console.log)
 })
 
-// use transaction to add one data to two tables: userLogin, users
+// use transaction to add one data to two tables: userlogin, users
 // also, create a user in every table with default value 0:
 app.post('/signup', (req, res) => {
     const {name, email, password} =  req.body;
@@ -153,33 +153,33 @@ app.post('/signup', (req, res) => {
             email: email,
             password: hash
         }, 'email')
-        .into('userLogin')
-        .then((loginEmail) => {
-            return trx('activity').insert({
-                email: loginEmail[0]
-            }, 'email')
-            .then((loginEmail) => {
-                return trx('exercise').insert({
-                    email: loginEmail[0]
-                }, 'email')
-                .then((loginEmail) => {
-                    return trx('carbohydrate').insert({
-                        email: loginEmail[0]
-                    }, 'email')
-                    .then((loginEmail) => {
-                        return trx('totalCalorie').insert({
-                            email: loginEmail[0]
-                        }, 'email')
+        .into('userlogin')
+        // .then((loginEmail) => {
+        //     return trx('activity').insert({
+        //         email: loginEmail[0]
+        //     }, 'email')
+        //     .then((loginEmail) => {
+        //         return trx('exercise').insert({
+        //             email: loginEmail[0]
+        //         }, 'email')
+        //         .then((loginEmail) => {
+        //             return trx('carbohydrate').insert({
+        //                 email: loginEmail[0]
+        //             }, 'email')
+        //             .then((loginEmail) => {
+        //                 return trx('totalCalorie').insert({
+        //                     email: loginEmail[0]
+        //                 }, 'email')
                         .then((loginEmail) => {
                             return trx('users').insert({
                                 email: loginEmail[0],
                                 name: name
                             }, '*')
                         })
-                    })
-                })
-            })
-        })
+                    // })
+                // })
+            // })
+        // })
     })
     .then(user => {
         res.json(user[0])
@@ -192,7 +192,7 @@ app.post('/signup', (req, res) => {
     //         email: email,
     //         password: hash
     //     }, ['email'])
-    //     .into('userLogin')
+    //     .into('userlogin')
     //     .transacting(trx)
     //     .then((loginEmail) => {
     //         return db('users').insert({

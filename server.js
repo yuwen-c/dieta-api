@@ -15,9 +15,6 @@ const db = knex({
     }
   });
 
-
-
-
 app.use(cors());
 app.use(express.urlencoded({extended: false}));
 app.use(express.json());
@@ -208,73 +205,73 @@ app.post("/exercise", (req, res) => {
     }
 })
 
-// save data to database: weight, deficit, activity, exercise, carbohydrate, totalcalorie
+// save data to tables: weight, deficit, activity, exercise, carbohydrate, totalcalorie
 app.put("/calculate", (req, res) => {
     const {email, weight, deficit, activity, exercise, dailyCarbon, dailyCalorie} = req.body;
     console.log(req.body);
 
-    db('users')
-    .where({ email: email })
-    .update({
-        weight: weight,
-        deficit: deficit        
+    db.transaction(trx => {
+        return trx('users')
+        .where({email: email})
+        .update({
+            weight: weight,
+            deficit: deficit
+        })
+        .then(() => {
+            return trx('activity')
+            .where({email: email})
+            .update({
+                day1: activity[0],
+                day2: activity[1],
+                day3: activity[2],
+                day4: activity[3],
+                day5: activity[4],
+                day6: activity[5],
+                day7: activity[6],
+            })
+            .then(() => {
+                return trx('exercise')
+                .where({email: email})
+                .update({
+                    day1: exercise[0],
+                    day2: exercise[1],
+                    day3: exercise[2],
+                    day4: exercise[3],
+                    day5: exercise[4],
+                    day6: exercise[5],
+                    day7: exercise[6]
+                })
+                .then(() => {
+                    return trx("carbohydrate")
+                    .where({email: email})
+                    .update({
+                        day1: dailyCarbon[0],
+                        day2: dailyCarbon[1],
+                        day3: dailyCarbon[2],
+                        day4: dailyCarbon[3],
+                        day5: dailyCarbon[4],
+                        day6: dailyCarbon[5],
+                        day7: dailyCarbon[6]
+                    })
+                    .then(() => {
+                        return trx("totalcalorie")
+                        .where({email: email})
+                        .update({
+                            day1: dailyCalorie[0],
+                            day2: dailyCalorie[1],
+                            day3: dailyCalorie[2],
+                            day4: dailyCalorie[3],
+                            day5: dailyCalorie[4],
+                            day6: dailyCalorie[5],
+                            day7: dailyCalorie[6]
+                        })
+                    })
+                })
+            })
+        })
     })
-    .then(console.log);
-
-    db('activity')
-    .where({ email: email})
-    .update({
-        day1: activity[0],
-        day2: activity[1],
-        day3: activity[2],
-        day4: activity[3],
-        day5: activity[4],
-        day6: activity[5],
-        day7: activity[6],
-    })
-    .then(console.log);
-
-// str 轉 int? 好像不用轉也可以？
-    db('exercise')
-    .where({ email: email })
-    .update({
-        day1: exercise[0],
-        day2: exercise[1],
-        day3: exercise[2],
-        day4: exercise[3],
-        day5: exercise[4],
-        day6: exercise[5],
-        day7: exercise[6]
-    })
-    .then(console.log);
-
-    db('carbohydrate')
-    .where({ email: email })
-    .update({
-        day1: dailyCarbon[0],
-        day2: dailyCarbon[1],
-        day3: dailyCarbon[2],
-        day4: dailyCarbon[3],
-        day5: dailyCarbon[4],
-        day6: dailyCarbon[5],
-        day7: dailyCarbon[6]
-    })
-    .then(console.log);
-
-    db('totalcalorie')
-    .where({ email: email })
-    .update({
-        day1: dailyCalorie[0],
-        day2: dailyCalorie[1],
-        day3: dailyCalorie[2],
-        day4: dailyCalorie[3],
-        day5: dailyCalorie[4],
-        day6: dailyCalorie[5],
-        day7: dailyCalorie[6]
-    })
-    .then(console.log);
-
-    res.json("ok");
+    .then(() => res.json("ok"))
+    .catch(error => console.log(error));
 })
 
 // "/result" : post 從database叫出上次儲存的結果

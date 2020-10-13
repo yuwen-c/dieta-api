@@ -314,9 +314,21 @@ app.post("/result", (req, res) => {
         .where({email: email})
         .select("*")
         .then(userCalorie => {
-            res.json({
-                userCarbon: userCarbon[0],
-                userCalorie: userCalorie[0]
+            db("activity")
+            .where({email: email})
+            .select("*")
+            .then(userActivity => {
+                db("exercise")
+                .where({email: email})
+                .select("*")
+                .then(userExercise => {
+                    res.json({
+                        userCarbon: userCarbon[0],
+                        userCalorie: userCalorie[0],
+                        userActivity: userActivity[0],
+                        userExercise: userExercise[0]
+                    })
+                })
             })
         })
         .catch(error => console.log(error))

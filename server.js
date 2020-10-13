@@ -52,7 +52,7 @@ const database = {
     ],
     table_activity: [
         {
-            userEmail:'marina@gmail.com',  //table column改為email
+            email:'marina@gmail.com',  //table column改為email
             0:'1',  // table column 改為day1, day2...
             1:'1',
             2:'1',
@@ -64,7 +64,7 @@ const database = {
     ],
     table_exercise: [
         {
-            userEmail:'marina@gmail.com',
+            email:'marina@gmail.com',
             0:'0',
             1:'0',
             2:'0',
@@ -76,7 +76,7 @@ const database = {
     ],
     table_carbohydrate: [
         {
-            userEmail: 'marina@gmail.com',
+            email: 'marina@gmail.com',
             day1:84,
             day2:84,
             day3:84,
@@ -89,7 +89,7 @@ const database = {
     ],
     table_totalCalorie: [
         {
-            userEmail: 'marina@gmail.com',
+            email: 'marina@gmail.com',
             // protein: 0,
             // oil:0,
 
@@ -185,24 +185,52 @@ app.post('/signup', (req, res) => {
 
 // load activity record
 app.post("/activity", (req, res) => {
-    if(req.body.email === database.table_activity[0].userEmail){
-        //console.log(database.table_activity[0]);
-        res.json(database.table_activity[0]);
-    }
-    else{
-        res.status(404).json('get activity failure');;
-    }
+    const {email} = req.body;
+
+    db("users")
+    .where({email: email})
+    .select("weight")
+    .then(weight => {
+    // if the user have never saved data, the weight will be 0.
+        if(weight[0].weight === 0){
+            res.json("No saved record! please choose the options.")
+        }
+        else{
+            db("activity")
+            .where({email: email})
+            .select("*")
+            .then(userActivity => {
+                res.json(userActivity[0])
+            })
+            .catch(console.log);
+        }
+    })
+    .catch(console.log);
 })
 
 // load exercise record
 app.post("/exercise", (req, res) => {
-    if(req.body.email === database.table_exercise[0].userEmail){
-        //console.log(database.table_exercise[0]);
-        res.json(database.table_exercise[0]);
-    }
-    else{
-        res.status(404).json('get exercise failure')
-    }
+    const {email} = req.body;
+
+    db("users")
+    .where({email: email})
+    .select("weight")
+    .then(weight => {
+    // if the user have never saved data, the weight will be 0.
+        if(weight[0].weight === 0){
+            res.json("No saved record! please choose the options.")
+        }
+        else{
+            db("exercise")
+            .where({email: email})
+            .select("*")
+            .then(userExercise => {
+                res.json(userExercise[0])
+            })
+            .catch(console.log);
+        }
+    })
+    .catch(console.log);
 })
 
 // save data to tables: weight, deficit, activity, exercise, carbohydrate, totalcalorie

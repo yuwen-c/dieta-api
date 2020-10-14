@@ -135,53 +135,27 @@ app.post('/signin', (req, res) => {
 // also, create a user in every table with default value 0:
 app.post('/signup', (req, res) => {
     const {name, email, password} =  req.body;
-    const hash = bcrypt.hashSync(password);
-
-    // method 1, trx as a query builder
-    db.transaction((trx) => {
-        return trx
-        .insert({
-            email: email,
-            password: hash
-        }, 'email')
-        .into('userlogin')
-        .then((loginEmail) => {
-            return trx('users').insert({
-                email: loginEmail[0],
-                name: name
-            }, '*')
+    if(name && email && password){
+        const hash = bcrypt.hashSync(password);
+        db.transaction((trx) => {
+            return trx
+            .insert({
+                email: email,
+                password: hash
+            }, 'email')
+            .into('userlogin')
+            .then((loginEmail) => {
+                return trx('users').insert({
+                    email: loginEmail[0],
+                    name: name
+                }, '*')
+            })
         })
-    })
-    .then(user => {
-        res.json(user[0])
-    })
-    .catch(error => console.log(error));
-
-    // method 2: trx as a transaction obj:
-    // db.transaction((trx) => {
-    //     db.insert({
-    //         email: email,
-    //         password: hash
-    //     }, ['email'])
-    //     .into('userlogin')
-    //     .transacting(trx)
-    //     .then((loginEmail) => {
-    //         return db('users').insert({
-    //             email: loginEmail[0],
-    //             name: name,
-    //         }, ['*'])
-    //         .transacting(trx)
-    //     })
-    //     .then(trx.commit)
-    //     .catch(trx.rollback)
-    // })
-    // .then((user)=> {
-    //     res.json(user[0])
-    //     console.log(user[0]);
-    // })
-    // .catch((error)=> {
-    //     console.log(error)
-    // });
+        .then(user => {
+            res.json(user[0])
+        })
+        .catch(error => console.log(error));
+    }
 })
 
 // load activity record

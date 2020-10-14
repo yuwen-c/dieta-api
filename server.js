@@ -108,26 +108,27 @@ app.get('/', (req, res) => {
 // compare password and return user data to front end
 app.post('/signin', (req, res) => {
     const {email, password} = req.body;
-    console.log(req.body)
-    db('userlogin').where({
-        email: email
-    })
-    .then(user => {
-        if(user.length){
-            const isValid = bcrypt.compareSync(password, user[0].password) 
-            if (isValid){
-                db('users').where({
-                    email: user[0].email
-                })
-                .then(userData => {res.json(userData[0])})
+    if(email && password){
+        db('userlogin').where({
+            email: email
+        })
+        .then(user => {
+            if(user.length){
+                const isValid = bcrypt.compareSync(password, user[0].password) 
+                if (isValid){
+                    db('users').where({
+                        email: user[0].email
+                    })
+                    .then(userData => {res.json(userData[0])})
+                }
+                else{
+                    res.json("Sign in failure.")
+                }
             }
-            else{
-                res.json("wrong password------need change later")
-            }
-        }
-        else(res.json("no such user"))
-    })
-    .catch(console.log)
+            else(res.json("User doesn't exist."))
+        })
+        .catch(console.log)
+    }
 })
 
 // use transaction to add one data to two tables: userlogin, users

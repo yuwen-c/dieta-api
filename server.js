@@ -280,28 +280,33 @@ app.put("/calculate", (req, res) => {
 // "/result" : post 從database叫出上次儲存的結果
 app.post("/result", (req, res) => {
     const {email} = req.body;
-
-    db("carbohydrate")
+    db("users")
     .where({email: email})
     .select("*")
-    .then(userCarbon => {
-        db("totalcalorie")
+    .then(user => {
+        db("carbohydrate")
         .where({email: email})
         .select("*")
-        .then(userCalorie => {
-            db("activity")
+        .then(userCarbon => {
+            db("totalcalorie")
             .where({email: email})
             .select("*")
-            .then(userActivity => {
-                db("exercise")
+            .then(userCalorie => {
+                db("activity")
                 .where({email: email})
                 .select("*")
-                .then(userExercise => {
-                    res.json({
-                        userCarbon: userCarbon[0],
-                        userCalorie: userCalorie[0],
-                        userActivity: userActivity[0],
-                        userExercise: userExercise[0]
+                .then(userActivity => {
+                    db("exercise")
+                    .where({email: email})
+                    .select("*")
+                    .then(userExercise => {
+                        res.json({
+                            user: user[0],
+                            userCarbon: userCarbon[0],
+                            userCalorie: userCalorie[0],
+                            userActivity: userActivity[0],
+                            userExercise: userExercise[0]
+                        })
                     })
                 })
             })

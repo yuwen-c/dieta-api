@@ -2,6 +2,7 @@ const express = require('express'); // import module
 const cors = require('cors');
 const knex = require('knex');
 const bcrypt = require('bcrypt-nodejs');
+const e = require('express');
 
 const app = express(); // create one
 
@@ -129,6 +130,14 @@ app.post('/signin', (req, res) => {
         })
         .catch(console.log)
     }
+})
+
+// get user data
+app.post('/getUser', (req, res) => {
+    db('users')
+    .where({email: req.body.email})
+    .then(user => {res.json(user[0])})
+    .catch(console.log);
 })
 
 // use transaction to add one data to two tables: userlogin, users

@@ -189,7 +189,7 @@ app.post("/activity", (req, res) => {
         .then(weight => {
         // if the user have never saved data, the weight will be 0.
             if(weight[0].weight === 0){
-                res.json("No saved record! please choose the options.")
+                res.json("No saved record.")
             }
             else{
                 db("activity")
@@ -218,7 +218,7 @@ app.post("/exercise", (req, res) => {
         .then(weight => {
         // if the user have never saved data, the weight will be 0.
             if(weight[0].weight === 0){
-                res.json("No saved record! please choose the options.")
+                res.json("No saved record.")
             }
             else{
                 db("exercise")

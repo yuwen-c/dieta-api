@@ -255,20 +255,19 @@ app.put("/calculate", (req, res) => {
     const {email, weight, deficit, activity, exercise, dailyCarbon, dailyCalorie} = req.body;
     if(email, weight, deficit, activity, exercise, dailyCarbon, dailyCalorie){
         db('users')
-        .select('email')
+        .select('*')
         .where({email: email})
-        .then(email => {
-            if(email.length){
+        .then(user => {
+            if(user.length){
                 db.transaction(trx => {
                     return trx('users')
-                    .select('email')
+                    .select('*')
                     .where({email: email})
                     .update({
                         weight: weight,
                         deficit: deficit
-                    }, 'email')
-                    .then((email) => {
-                        console.log(email);
+                    })
+                    .then(() => {
                         return trx('activity')
                         .where({email: email})
                         .update({

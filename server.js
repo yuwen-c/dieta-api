@@ -152,6 +152,7 @@ app.post('/getUser', (req, res) => {
 // use transaction to add one data to two tables: userlogin, users
 // also, create a user in every table with default value 0:
 app.post('/signup', (req, res) => {
+    console.log("signup- reqBody", req.body);
     const {name, email, password} =  req.body;
     if(name && email && password){
         const hash = bcrypt.hashSync(password);
@@ -170,7 +171,8 @@ app.post('/signup', (req, res) => {
             })
         })
         .then(user => {
-            res.json(user[0])
+            res.json(user[0]);
+            console.log("signup- create new user", user[0]);
         })
         .catch(error => console.log(error));
     }
@@ -250,13 +252,13 @@ app.post("/exercise", (req, res) => {
 })
 
 // save data to tables: weight, deficit, activity, exercise, carbohydrate, totalcalorie
-app.put("/calculate", (req, res) => {
-    console.log(req.body);
+app.put("/saveData", (req, res) => {
+    console.log(req.body.email)
     const {email, weight, deficit, activity, exercise, dailyCarbon, dailyCalorie} = req.body;
     if(email, weight, deficit, activity, exercise, dailyCarbon, dailyCalorie){
         db('users')
-        .select('*')
         .where({email: email})
+        .select('*')
         .then(user => {
             if(user.length){
                 db.transaction(trx => {

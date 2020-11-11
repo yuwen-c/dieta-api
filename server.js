@@ -35,7 +35,7 @@ app.get('/', (req, res) => {
 // get user data
 app.post('/user', (req, res) => {
     console.log("user -body", req.body);
-    const {email} = req.body.email;
+    const {email} = req.body;
     if(email){
         db('users')
         .where({email: email})

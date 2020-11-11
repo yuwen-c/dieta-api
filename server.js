@@ -270,6 +270,7 @@ app.put("/saveData", (req, res) => {
 
 // "/result" : post 從database叫出上次儲存的結果
 app.post("/result", (req, res) => {
+    console.log("result -body", req.body);
     const {email} = req.body;
     if(email){
         db("users")
@@ -311,7 +312,7 @@ app.post("/result", (req, res) => {
         .catch(console.log);
     }
     else{
-        res.json("Get resule failure.")
+        res.json("Get result failure.")
     }
 })
 

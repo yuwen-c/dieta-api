@@ -32,6 +32,20 @@ app.get('/', (req, res) => {
     // res.json("hi there!")
 })
 
+// get user data
+app.post('/user', (req, res) => {
+    const {email} = req.body.email;
+    if(email){
+        db('users')
+        .where({email: email})
+        .then(user => {res.json(user[0])})
+        .catch(console.log);        
+    }
+    else{
+        res.json("Unable to get user");
+    }
+})
+
 // compare password and return user data to front end
 app.post('/signin', (req, res) => {
     const {email, password} = req.body;
@@ -62,19 +76,6 @@ app.post('/signin', (req, res) => {
     }
 })
 
-// get user data
-app.post('/getUser', (req, res) => {
-    const {email} = req.body.email;
-    if(email){
-        db('users')
-        .where({email: email})
-        .then(user => {res.json(user[0])})
-        .catch(console.log);        
-    }
-    else{
-        res.json("Unable to get user");
-    }
-})
 
 // use transaction to add one data to two tables: userlogin, users
 // also, create a user in every table with default value 0:

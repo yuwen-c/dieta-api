@@ -180,7 +180,7 @@ app.post("/exercise", (req, res) => {
 
 // save data to tables: weight, deficit, activity, exercise, carbohydrate, totalcalorie
 app.put("/saveData", (req, res) => {
-    console.log(req.body.email)
+    console.log("saveData - req.body", req.body)
     const {email, weight, deficit, activity, exercise, dailyCarbon, dailyCalorie} = req.body;
     if(email, weight, deficit, activity, exercise, dailyCarbon, dailyCalorie){
         db('users')

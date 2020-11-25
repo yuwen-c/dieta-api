@@ -26,10 +26,10 @@ app.use(express.json());
 
 
 app.get('/', (req, res) => {
-    db.select('*').from('users')
-    .then(result => res.json(result))
-    .catch(console.log)
-    // res.json("hi there!")
+    // db.select('*').from('users')
+    // .then(result => res.json(result))
+    // .catch(console.log)
+    res.json("hi there!")
 })
 
 // get user data

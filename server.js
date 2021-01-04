@@ -2,7 +2,7 @@ const express = require('express'); // import module
 const cors = require('cors');
 const knex = require('knex');
 const bcrypt = require('bcrypt-nodejs');
-const e = require('express');
+// const e = require('express');
 
 const app = express(); // create one
 
@@ -320,3 +320,4 @@ app.post("/result", (req, res) => {
 app.listen(process.env.PORT || 3000, () => {
     console.log(`it's running on PORT ${process.env.PORT}`);
 })
+// run command: $ env PORT=3000 node server.js

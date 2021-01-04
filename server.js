@@ -9,14 +9,14 @@ const app = express(); // create one
 const db = knex({
     client: 'pg',
     connection: {
-        connectionString: process.env.DATABASE_URL,
-        ssl: {
-          rejectUnauthorized: false
-        }
-    //   host : '127.0.0.1',
-    //   user : '',
-    //   password : '',
-    //   database : 'Dieta'
+        // connectionString: process.env.DATABASE_URL,
+        // ssl: {
+        //   rejectUnauthorized: false
+        // }
+      host : '127.0.0.1',
+      user : '',
+      password : '',
+      database : 'Dieta'
     }
   });
 
@@ -100,7 +100,7 @@ app.post('/signup', (req, res) => {
         .then(user => {
             res.json(user[0]);
         })
-        .catch(error => console.log(error));
+        .catch(error => res.json("Fail to sign up."));
     }
     else{
         res.json("Sign up failure.");
@@ -318,6 +318,6 @@ app.post("/result", (req, res) => {
 
 // port for heroku
 app.listen(process.env.PORT || 3000, () => {
-    console.log(`it's running on PORT ${process.env.PORT}`);
+    console.log(`it's running on PORT ${process.env.PORT}, ${process.env.DATABASE_URL} `);
 })
 // run command: $ env PORT=3000 node server.js

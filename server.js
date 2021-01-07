@@ -2,7 +2,7 @@ const express = require('express'); // import module
 const cors = require('cors');
 const knex = require('knex');
 const bcrypt = require('bcrypt-nodejs');
-// const e = require('express');
+const signin = require('./user');
 
 const app = express(); // create one
 
@@ -33,18 +33,8 @@ app.get('/', (req, res) => {
 })
 
 // get user data
-app.post('/user', (req, res) => {
-    const {email} = req.body;
-    if(email){
-        db('users')
-        .where({email: email})
-        .then(user => {res.json(user[0])})
-        .catch(console.log);        
-    }
-    else{
-        res.json("Unable to get user");
-    }
-})
+// app.post('/user', (req, res) => {   })
+app.post('/user', (req, res) => signin.handleUser(req, res, db))
 
 // compare password and return user data to front end
 app.post('/signin', (req, res) => {

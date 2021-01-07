@@ -1,4 +1,4 @@
-const express = require('express'); // import module
+const express = require('express'); 
 const cors = require('cors');
 const knex = require('knex');
 const bcrypt = require('bcrypt-nodejs');
@@ -56,7 +56,7 @@ app.post("/exercise", (req, res) => exercise.handleExercise(req, res, db));
 // save data to tables: weight, deficit, activity, exercise, carbohydrate, totalcalorie
 app.put("/saveData", (req, res) => saveData.handleSaveData(req, res, db));
 
-// "/result" : post 從database叫出上次儲存的結果
+// "/result" : get the latest calculation result
 app.post("/result", (req, res) => result.handleResult(req, res, db));
 
 
@@ -65,6 +65,5 @@ app.post("/result", (req, res) => result.handleResult(req, res, db));
 
 // port for heroku
 app.listen(process.env.PORT || 3000, () => {
-    console.log(`it's running on PORT ${process.env.PORT}, ${process.env.DATABASE_URL} `);
+    console.log(`it's running on PORT ${process.env.PORT} `);
 })
-// run command: $ env PORT=3000 node server.js

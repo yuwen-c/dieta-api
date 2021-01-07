@@ -4,7 +4,7 @@ const knex = require('knex');
 const bcrypt = require('bcrypt-nodejs');
 const user = require('./controllers/user');
 const signin = require('./controllers/signin');
-
+const signup = require('./controllers/signup');
 
 
 
@@ -30,14 +30,11 @@ app.use(express.json());
 
 
 app.get('/', (req, res) => {
-    // db.select('*').from('users')
-    // .then(result => res.json(result))
-    // .catch(console.log)
     res.json("hi there!")
 })
 
 // get user data
-// app.post('/user', (req, res) => {   })
+// app.post('/user', (req, res) => {   })  //original syntax
 app.post('/user', (req, res) => user.handleUser(req, res, db))
 
 // compare password and return user data to front end
@@ -46,33 +43,7 @@ app.post('/signin', (req, res) => signin.handleSignin(req, res, db, bcrypt))
 
 // use transaction to add one data to two tables: userlogin, users
 // also, create a user in every table with default value 0:
-app.post('/signup', (req, res) => {
-    const {name, email, password} =  req.body;
-    if(name && email && password){
-        const hash = bcrypt.hashSync(password);
-        db.transaction((trx) => {
-            return trx
-            .insert({
-                email: email,
-                password: hash
-            }, 'email')
-            .into('userlogin')
-            .then((loginEmail) => {
-                return trx('users').insert({
-                    email: loginEmail[0],
-                    name: name
-                }, '*')
-            })
-        })
-        .then(user => {
-            res.json(user[0]);
-        })
-        .catch(error => res.json("Fail to sign up."));
-    }
-    else{
-        res.json("Sign up failure.");
-    }
-})
+app.post('/signup', (req, res) => signup.handleSignup(req, res, db, bcrypt))
 
 // load activity record
 app.post("/activity", (req, res) => {

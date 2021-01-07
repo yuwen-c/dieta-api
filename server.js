@@ -5,7 +5,7 @@ const bcrypt = require('bcrypt-nodejs');
 const user = require('./controllers/user');
 const signin = require('./controllers/signin');
 const signup = require('./controllers/signup');
-
+const activity = require('./controllers/activity');
 
 
 const app = express(); // create one
@@ -35,50 +35,18 @@ app.get('/', (req, res) => {
 
 // get user data
 // app.post('/user', (req, res) => {   })  //original syntax
-app.post('/user', (req, res) => user.handleUser(req, res, db))
+app.post('/user', (req, res) => user.handleUser(req, res, db));
 
 // compare password and return user data to front end
-app.post('/signin', (req, res) => signin.handleSignin(req, res, db, bcrypt))
+app.post('/signin', (req, res) => signin.handleSignin(req, res, db, bcrypt));
 
 
 // use transaction to add one data to two tables: userlogin, users
 // also, create a user in every table with default value 0:
-app.post('/signup', (req, res) => signup.handleSignup(req, res, db, bcrypt))
+app.post('/signup', (req, res) => signup.handleSignup(req, res, db, bcrypt));
 
 // load activity record
-app.post("/activity", (req, res) => {
-    const {email} = req.body;
-    if(email){
-        db("users")
-        .where({email: email})
-        .select('weight')
-        .then(weight => {
-            if(weight.length){ // if the user does exist
-            // if the user have never saved data, the weight will be 0.
-                if(weight[0].weight === 0){
-                    res.json("No saved record.")
-                }
-                else{
-                    db("activity")
-                    .where({email: email})
-                    .select("*")
-                    .then(userActivity => {
-                        res.json(userActivity[0])
-                    })
-                    .catch(console.log);
-                }                 
-            }
-            else{ // guest user
-                res.json("No saved record.")
-            }
-        })
-        .catch(e => {console.log(e.name, e.message)});      
-    }
-    else{  
-        // res.json("Get activity record failure.");
-        res.json("No saved record.")
-    }
-})
+app.post("/activity", (req, res) => activity.handleActivity(req, res, db));
 
 // load exercise record
 app.post("/exercise", (req, res) => {

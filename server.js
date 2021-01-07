@@ -8,7 +8,7 @@ const signup = require('./controllers/signup');
 const activity = require('./controllers/activity');
 const exercise = require('./controllers/exercise');
 const saveData = require('./controllers/saveData');
-
+const result = require('./controllers/result');
 
 const app = express(); // create one
 
@@ -57,51 +57,7 @@ app.post("/exercise", (req, res) => exercise.handleExercise(req, res, db));
 app.put("/saveData", (req, res) => saveData.handleSaveData(req, res, db));
 
 // "/result" : post 從database叫出上次儲存的結果
-app.post("/result", (req, res) => {
-    const {email} = req.body;
-    if(email){
-        db("users")
-        .where({email: email})
-        .select("*")
-        .then(user => {
-            db("carbohydrate")
-            .where({email: email})
-            .select("*")
-            .then(userCarbon => {
-                db("totalcalorie")
-                .where({email: email})
-                .select("*")
-                .then(userCalorie => {
-                    db("activity")
-                    .where({email: email})
-                    .select("*")
-                    .then(userActivity => {
-                        db("exercise")
-                        .where({email: email})
-                        .select("*")
-                        .then(userExercise => {
-                            res.json({
-                                user: user[0],
-                                userCarbon: userCarbon[0],
-                                userCalorie: userCalorie[0],
-                                userActivity: userActivity[0],
-                                userExercise: userExercise[0]
-                            })
-                        })
-                        .catch(console.log);
-                    })
-                    .catch(console.log);
-                })
-                .catch(console.log);
-            })
-            .catch(console.log);
-        })
-        .catch(console.log);
-    }
-    else{
-        res.json("Get result failure.")
-    }
-})
+app.post("/result", (req, res) => result.handleResult(req, res, db));
 
 
 // set port

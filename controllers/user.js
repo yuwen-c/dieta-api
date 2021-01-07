@@ -1,5 +1,4 @@
 const handleUser = (req, res, db) => {
-    console.log(req.body)
         const {email} = req.body;
         if(email){
             db('users')

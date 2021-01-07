@@ -2,7 +2,11 @@ const express = require('express'); // import module
 const cors = require('cors');
 const knex = require('knex');
 const bcrypt = require('bcrypt-nodejs');
-const signin = require('./controllers/user');
+const user = require('./controllers/user');
+const signin = require('./controllers/signin');
+
+
+
 
 const app = express(); // create one
 
@@ -34,37 +38,10 @@ app.get('/', (req, res) => {
 
 // get user data
 // app.post('/user', (req, res) => {   })
-app.post('/user', (req, res) => signin.handleUser(req, res, db))
+app.post('/user', (req, res) => user.handleUser(req, res, db))
 
 // compare password and return user data to front end
-app.post('/signin', (req, res) => {
-    const {email, password} = req.body;
-    if(email && password){
-        db('userlogin').where({
-            email: email
-        })
-        .then(user => {
-            if(user.length){
-                const isValid = bcrypt.compareSync(password, user[0].password) 
-                if (isValid){
-                    db('users').where({
-                        email: user[0].email
-                    })
-                    .then(userData => {res.json(userData[0])})
-                    .catch(console.log)
-                }
-                else{
-                    res.json("Sign in failure.")
-                }
-            }
-            else(res.json("User doesn't exist."))
-        })
-        .catch(console.log)
-    }
-    else{
-        res.json("Sign in failure.");
-    }
-})
+app.post('/signin', (req, res) => signin.handleSignin(req, res, db, bcrypt))
 
 
 // use transaction to add one data to two tables: userlogin, users

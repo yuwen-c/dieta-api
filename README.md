@@ -4,8 +4,10 @@
 
 
 ## features
-✨ built by express/node.js\
-✨ database built by postgreSQL\
-✨ connect database with Knex\
-✨ save user password hash with bcrypt\
-✨ deployed to Heroku
+✨ built by **express/node.js**\
+✨ database built by **postgreSQL**\
+✨ connect database with **Knex**\
+✨ save user password **hash** with **bcrypt**\
+✨ deployed to **Heroku**
+
+
